@@ -1,0 +1,58 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var pkg = require('../package.json');
+var dgram = require('dgram');
+var socket = dgram.createSocket('udp4');
+var program = require('commander');
+var osc = require('osc-min');
+
+var defaults = { host: 'localhost', port: 7400 };
+
+function parseHost(val) {
+  var splitted = val.split(':');
+  return {
+    host: splitted[0] || defaults.host,
+    port: splitted[1] || defaults.port
+  };
+}
+
+program
+  .version(pkg.version)
+  .option('-H, --host <host>', 'host', parseHost, defaults);
+
+program.parse(process.argv);
+
+var args = program.args.map(function(el, i) {
+  var val;
+
+  if (i < 1) return el;
+
+  val = parseInt(el, 10);
+  if (val + '' === el) {
+    return { type: 'integer', value: val };
+  }
+
+  val = parseFloat(el);
+  if (val + '' === el) {
+    return { type: 'float', value: val };
+  }
+
+  return { type: 'string', value: el };
+});
+
+var buf = osc.toBuffer({
+  address: args.shift(),
+  args: args
+});
+
+socket.send(buf, 0, buf.length, program.host.port, program.host.host, function(err) {
+  if (err) {
+    console.error(err);
+    process.exit(-1);
+  }
+  process.exit(0);
+});

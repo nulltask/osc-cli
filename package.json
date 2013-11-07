@@ -1,0 +1,20 @@
+{
+  "name": "osc-cli",
+  "version": "0.0.0",
+  "description": "osc command-line interface",
+  "keywords": [
+    "osc",
+    "cli"
+  ],
+  "author": "Seiya Konno <nulltask@gmail.com>",
+  "repository": "git://github.com/nulltask/osc-cli.git",
+  "dependencies": {
+    "osc-min": "0.0.12",
+    "commander": "~2.0.0"
+  },
+  "bin": {
+    "osc": "bin/osc",
+    "osc-cli": "bin/osc"
+  },
+  "preferGlobal": true
+}
