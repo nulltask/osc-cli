@@ -1,5 +1,5 @@
 
-# osc-cmd
+# osc-cli
 
 osc command-line interface
 
