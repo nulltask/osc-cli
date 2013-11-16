@@ -7,6 +7,7 @@
 var pkg = require('../package.json');
 var dgram = require('dgram');
 var socket = dgram.createSocket('udp4');
+var exit = process.exit;
 var program = require('commander');
 var osc = require('osc-min');
 
@@ -26,33 +27,29 @@ program
 
 program.parse(process.argv);
 
+var remote = program.host;
+var address = program.args.shift();
 var args = program.args.map(function(el, i) {
   var val;
 
-  if (i < 1) return el;
-
   val = parseInt(el, 10);
-  if (val + '' === el) {
-    return { type: 'integer', value: val };
-  }
+  if (val + '' === el) return { type: 'integer', value: val };
 
   val = parseFloat(el);
-  if (val + '' === el) {
-    return { type: 'float', value: val };
-  }
+  if (val + '' === el) return { type: 'float', value: val };
 
   return { type: 'string', value: el };
 });
 
 var buf = osc.toBuffer({
-  address: args.shift(),
+  address: address,
   args: args
 });
 
-socket.send(buf, 0, buf.length, program.host.port, program.host.host, function(err) {
+socket.send(buf, 0, buf.length, remote.port, remote.host, function(err) {
   if (err) {
     console.error(err);
-    process.exit(-1);
+    exit(-1);
   }
-  process.exit(0);
+  exit(0);
 });
