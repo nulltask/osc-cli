@@ -42,6 +42,12 @@ var args = program.args.map(function(el, i) {
   return { type: 'string', value: el };
 });
 
+if (!address) {
+  program.outputHelp();
+  console.error('  one or more arguments require.\n');
+  exit(-1);
+}
+
 var buf = osc.toBuffer({
   address: address,
   args: args
