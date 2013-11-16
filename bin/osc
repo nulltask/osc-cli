@@ -23,7 +23,8 @@ function parseHost(val) {
 
 program
   .version(pkg.version)
-  .option('-H, --host <host>', 'host', parseHost, defaults);
+  .option('-H, --host <host>', 'host', parseHost, defaults)
+  .option('-s --silent', 'output');
 
 program.parse(process.argv);
 
@@ -50,6 +51,10 @@ socket.send(buf, 0, buf.length, remote.port, remote.host, function(err) {
   if (err) {
     console.error(err);
     exit(-1);
+  }
+  if (!program.silent) {
+    console.log(' sent %s (%s) to %s:%s',
+      address, program.args.join(', '), remote.host, remote.port);
   }
   exit(0);
 });
