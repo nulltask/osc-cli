@@ -14,6 +14,7 @@
   },
   "bin": {
     "osc": "bin/osc",
+    "osc-listen": "bin/osc-listen",
     "osc-cli": "bin/osc"
   },
   "preferGlobal": true
