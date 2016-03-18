@@ -11,12 +11,12 @@ var exit = process.exit;
 var program = require('commander');
 var osc = require('osc-min');
 
-var defaults = { port: 7400, address: '/test' };
+var defaults = { port: 7400 };
 
 program
   .version(pkg.version)
   .option('-p --port <port>', 'port', defaults.port)
-  .option('-a --address <address>', 'address', defaults.address);
+  .option('-a --address <address>', 'address');
 
 program.parse(process.argv);
 
@@ -28,16 +28,29 @@ socket.on('listening', function() {
   console.log(listen);
 });
 
-socket.on('message', function(msg) {
+socket.on('message', function(message) {
   var error, error1;
   try {
-    var msg = osc.fromBuffer(msg);
-    if (msg.address != program.address) return;
-    console.log("Received message at address: " + msg.address);
-    msg.args.forEach(function(arg, i) {
-      console.log("Arg " + i + " (" + arg.type + "): " + arg.value);
+    var packet = osc.fromBuffer(message);
+    var messages = [];
+
+    if (packet.oscType == 'message') {
+      messages.push(msg);
+    }
+    if (packet.oscType == 'bundle') {
+      packet.elements.forEach(function(element) {
+        messages.push(element);
+      });
+    }
+
+    messages.forEach(function(msg) {
+      if (program.address && (msg.address != program.address)) return;
+      console.log("Received message at address: " + msg.address);
+      msg.args.forEach(function(arg, i) {
+        console.log("Arg " + i + " (" + arg.type + "): " + arg.value);
+      });
     });
-    return;
+
   } catch (error1) {
     error = error1;
     return console.log("invalid OSC packet");
