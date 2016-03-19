@@ -19,7 +19,7 @@ with host
 
 ### Listen
 
-	$ osc-listen -a /address/whatever -p 12345
+    $ osc-listen -a /address/whatever -p 12345
 
 ## License
 
