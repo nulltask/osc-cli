@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var pkg = require('../package.json');
+var dgram = require('dgram');
+var socket = dgram.createSocket('udp4');
+var exit = process.exit;
+var program = require('commander');
+var osc = require('osc-min');
+
+var defaults = { port: 7400 };
+
+program
+  .version(pkg.version)
+  .option('-p --port <port>', 'port', defaults.port)
+  .option('-a --address <address>', 'address');
+
+program.parse(process.argv);
+
+socket.on('listening', function() {
+  var listen = "Listening for messages on port " + program.port;
+  if (program.address) {
+    listen += " at address " + program.address;
+  }
+  console.log(listen);
+});
+
+socket.on('message', function(message) {
+  var error, error1;
+  try {
+    var packet = osc.fromBuffer(message);
+    var messages = [];
+
+    if (packet.oscType == 'message') {
+      messages.push(msg);
+    }
+    if (packet.oscType == 'bundle') {
+      packet.elements.forEach(function(element) {
+        messages.push(element);
+      });
+    }
+
+    messages.forEach(function(msg) {
+      if (program.address && (msg.address != program.address)) return;
+      console.log("Received message at address: " + msg.address);
+      msg.args.forEach(function(arg, i) {
+        console.log("Arg " + i + " (" + arg.type + "): " + arg.value);
+      });
+    });
+
+  } catch (error1) {
+    error = error1;
+    return console.log("invalid OSC packet");
+  }
+});
+
+socket.bind(program.port, '127.0.0.1');

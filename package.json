@@ -9,11 +9,12 @@
   "author": "Seiya Konno <nulltask@gmail.com>",
   "repository": "git://github.com/nulltask/osc-cli.git",
   "dependencies": {
-    "osc-min": "0.0.12",
+    "osc-min": "1.1.1",
     "commander": "~2.0.0"
   },
   "bin": {
     "osc": "bin/osc",
+    "osc-listen": "bin/osc-listen",
     "osc-cli": "bin/osc"
   },
   "preferGlobal": true
