@@ -35,7 +35,7 @@ socket.on('message', function(message) {
     var messages = [];
 
     if (packet.oscType == 'message') {
-      messages.push(msg);
+      messages.push(packet);
     }
     if (packet.oscType == 'bundle') {
       packet.elements.forEach(function(element) {
@@ -53,7 +53,7 @@ socket.on('message', function(message) {
 
   } catch (error1) {
     error = error1;
-    return console.log("invalid OSC packet");
+    return console.log("invalid OSC packet", error1, error1.stack);
   }
 });
 
